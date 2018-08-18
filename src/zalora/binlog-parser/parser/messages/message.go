@@ -70,11 +70,13 @@ func NewQueryMessage(header MessageHeader, query SqlQuery) QueryMessage {
 type UpdateMessage struct {
 	baseMessage
 	OldData MessageRowData
-	NewData MessageRowData
+	//NewData MessageRowData
+	Data MessageRowData
 }
 
 func NewUpdateMessage(header MessageHeader, oldData MessageRowData, newData MessageRowData) UpdateMessage {
-	return UpdateMessage{baseMessage: baseMessage{Header: header, Type: MESSAGE_TYPE_UPDATE}, OldData: oldData, NewData: newData}
+	//return UpdateMessage{baseMessage: baseMessage{Header: header, Type: MESSAGE_TYPE_UPDATE}, OldData: oldData, NewData: newData}
+	return UpdateMessage{baseMessage: baseMessage{Header: header, Type: MESSAGE_TYPE_UPDATE}, OldData: oldData, Data: newData}
 }
 
 type InsertMessage struct {

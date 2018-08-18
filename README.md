@@ -1,38 +1,98 @@
 # binlog-parser
 
-[![Build Status](https://travis-ci.org/zalora/binlog-parser.svg?branch=master)](https://travis-ci.org/zalora/binlog-parser)
-
 A tool for parsing a MySQL binlog file to JSON. Reads a binlog input file, queries a database for field names, writes JSON to stdout. The output looks like this:
 
-    {
-        "Header": {
-            "Schema": "test_db",
-            "Table": "buildings",
-            "BinlogMessageTime": "2017-04-13T06:34:30Z",
-            "BinlogPosition": 397,
-            "XId": 9
-        },
-        "Type": "Insert",
-        "Data": {
-            "Row": {
-                "address": "3950 North 1st Street CA 95134",
-                "building_name": "ACME Headquaters",
-                "building_no": 1
-            },
-            "MappingNotice": ""
-        }
-    }
-    ...
+```
+# WRITE_ROWS_EVENT (Insert) 
+{  
+   "Header":{  
+      "Schema":"feed",
+      "Table":"ob_live",
+      "BinlogMessageTime":"2018-08-18T08:26:22Z",
+      "BinlogPosition":407,
+      "XId":99
+   },
+   "Type":"Insert",
+   "Data":{  
+      "Row":{  
+         "curr_status":1,
+         "member":"mark",
+         "pre_status":1,
+         "update_time":"2018-08-18 16:26:22"
+      },
+      "MappingNotice":""
+   }
+}
+
+# UPDATE_ROWS_EVENT
+{  
+   "Header":{  
+      "Schema":"feed",
+      "Table":"ob_live",
+      "BinlogMessageTime":"2018-08-18T08:27:26Z",
+      "BinlogPosition":981,
+      "XId":102
+   },
+   "Type":"Update",
+   "OldData":{  
+      "Row":{  
+         "curr_status":1,
+         "member":"mark",
+         "pre_status":1,
+         "update_time":"2018-08-18 16:26:22"
+      },
+      "MappingNotice":""
+   },
+   "Data":{  
+      "Row":{  
+         "curr_status":1,
+         "member":"mark",
+         "pre_status":2,
+         "update_time":"2018-08-18 16:26:22"
+      },
+      "MappingNotice":""
+   }
+}
+
+# DELETE_ROWS_EVENT 
+{  
+   "Header":{  
+      "Schema":"feed",
+      "Table":"ob_live",
+      "BinlogMessageTime":"2018-08-18T08:27:45Z",
+      "BinlogPosition":1257,
+      "XId":103
+   },
+   "Type":"Delete",
+   "Data":{  
+      "Row":{  
+         "curr_status":1,
+         "member":"eric",
+         "pre_status":1,
+         "update_time":"2018-08-18 16:26:39"
+      },
+      "MappingNotice":""
+   }
+}
+
+```
 
 # Installation
 
-Requires Go version 1.7 or higher.
+> Requires Go version 1.7 or higher.
 
-    $ git clone https://github.com/zalora/binlog-parser.git
-    $ cd binlog-parser
-    $ git submodule update --init
-    $ make
-    $ ./bin/binlog-parser -h
+```
+$ git clone https://github.com/zalora/binlog-parser.git
+$ cd binlog-parser
+$ git submodule update --init
+
+# since https://go.googlesource.com is blocked by chinese firewall
+# use proxy e.g. ss, via https://github.com/shadowsocks/shadowsocks-windows/issues/407
+$ HTTP_PROXY="http://127.0.0.1:1080" HTTPS_PROXY="http://127.0.0.1:1080" git submodule update --init
+              
+$ make        
+$ ./bin/binlog-parser -h
+```           
 
 ## Assumptions
 
@@ -76,7 +136,9 @@ Run `binlog-parser -h` to get the list of available options:
 
 Using `dbuser` and no password, connecting to `information_schema` database on localhost, parsing the binlog file `/some/binlog.bin`:
 
-    DB_DSN=dbuser@/information_schema ./binlog-parser /some/binlog.bin
+```
+DB_DSN=dbuser@/information_schema ./binlog-parser /some/binlog.bin
+```
 
 ## Matching field names and data
 
@@ -85,6 +147,13 @@ usable JSON, it connects to a running MySQL instance and queries the `informatio
 
 The database connection is creatd by using the environment variable `DB_DSN`, which should contain the database credentials in the form of
 `user:password@/dbname` - the format that the [Go MySQL driver](https://godoc.org/github.com/go-sql-driver/mysql) uses.
+
+```
+export DB_DSN='<username>:<passwd>@<protocol>(<host>:<port>)/information_schema' ./bin/binlog-parser /some/binlog
+
+# https://stackoverflow.com/questions/23550453/golang-how-to-open-a-remote-mysql-connection
+e.g. export DB_DSN='root:123@tcp(localhost:3306)/information_schema' ./bin/binlog-parser /tmp/mysql-bin.000001
+```
 
 ## Effect of schema changes
 
@@ -180,11 +249,3 @@ has no way of knowing of these changes.
 
 If this limitation is not acceptable, some tools like [Maxwell's Daemon by Zendesk](https://github.com/zendesk/maxwell) can work around that issue at the cost of greater complexity.
 
-# Releases
-
-How to do a release:
-
-    git tag -a X.X.X -m "... release note ..."
-    git push --follow-tags
-
-Travis CI will attach a statically built binary to the release tag on GitHub.
