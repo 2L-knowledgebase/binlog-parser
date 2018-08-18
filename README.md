@@ -249,3 +249,7 @@ has no way of knowing of these changes.
 
 If this limitation is not acceptable, some tools like [Maxwell's Daemon by Zendesk](https://github.com/zendesk/maxwell) can work around that issue at the cost of greater complexity.
 
+### 参考文章(中文)
+
+1. [MySQL Binlog解析](https://blog.csdn.net/u013256816/article/details/53020335)
+2. [MySQL binlog格式解析](https://www.jianshu.com/p/c16686b35807)
