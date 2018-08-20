@@ -149,10 +149,10 @@ The database connection is creatd by using the environment variable `DB_DSN`, wh
 `user:password@/dbname` - the format that the [Go MySQL driver](https://godoc.org/github.com/go-sql-driver/mysql) uses.
 
 ```
-export DB_DSN='<username>:<passwd>@<protocol>(<host>:<port>)/information_schema' ./bin/binlog-parser /some/binlog
+export DB_DSN='<username>:<passwd>@<protocol>(<host>:<port>)/information_schema' && ./bin/binlog-parser /some/binlog
 
 # https://stackoverflow.com/questions/23550453/golang-how-to-open-a-remote-mysql-connection
-e.g. export DB_DSN='root:123@tcp(localhost:3306)/information_schema' ./bin/binlog-parser /tmp/mysql-bin.000001
+e.g. export DB_DSN='root:123@tcp(localhost:3306)/information_schema' && ./bin/binlog-parser /tmp/mysql-bin.000001
 ```
 
 ## Effect of schema changes
